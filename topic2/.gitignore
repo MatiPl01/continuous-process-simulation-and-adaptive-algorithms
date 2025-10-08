@@ -6,6 +6,9 @@
 build/
 deps/
 
+# Cloned repositories
+iga-ads/
+
 # Data files (large binary files)
 res/out/
 *.data
