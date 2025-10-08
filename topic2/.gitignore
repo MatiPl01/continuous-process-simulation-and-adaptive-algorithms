@@ -1,0 +1,28 @@
+# Temporary files
+*.tmp
+*.log
+
+# Build artifacts
+build/
+deps/
+
+# Data files (large binary files)
+res/out/
+*.data
+
+# Generated animations and plots
+res/*.gif
+res/*.png
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+.dockerignore
