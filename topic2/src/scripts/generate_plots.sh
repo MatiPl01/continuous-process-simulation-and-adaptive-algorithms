@@ -12,11 +12,11 @@ fi
 
 # Generate static plots
 echo "🖼️  Creating static plots..."
-gnuplot scripts/static_plots.gp
+gnuplot src/static_plots.gp
 
 # Generate animation
 echo "🎬 Creating animation..."
-gnuplot scripts/animation.gp
+gnuplot src/animation.gp
 
 echo "✅ Visualizations complete!"
 echo "📁 Generated files:"

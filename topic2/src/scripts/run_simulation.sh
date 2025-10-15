@@ -5,13 +5,13 @@
 echo "🔥 Running heat transfer simulation..."
 
 # Create output directory
-mkdir -p res/out
+mkdir -p ../../res/out
 
 # Run the simulation directly
-cd iga-ads/build/examples
+cd ../../iga-ads/build/examples
 ./heat_2d
 cp out_*.data ../../../res/out/
-cd ../../../..
+cd ../../../../
 
 # Count the generated files
 FILE_COUNT=$(ls res/out/*.data 2>/dev/null | wc -l)

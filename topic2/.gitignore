@@ -1,31 +1,37 @@
-# Temporary files
-*.tmp
-*.log
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Cloned repository
+iga-ads/
 
 # Build artifacts
 build/
-deps/
+*.o
+*.a
+*.so
+*.dylib
+*.exe
 
-# Cloned repositories
-iga-ads/
-
-# Data files (large binary files)
-res/out/
-*.data
-
-# Generated animations and plots
-res/*.gif
-res/*.png
-
-# OS files
-.DS_Store
-Thumbs.db
+# Data files (large simulation outputs)
+res/out/*.data
+res/*.log
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Temporary files
+*.tmp
+*.temp
+*~
 
 # Docker
 .dockerignore

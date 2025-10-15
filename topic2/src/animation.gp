@@ -1,7 +1,7 @@
 #!/usr/bin/env gnuplot
 
 # Generate heat transfer animation
-# Usage: gnuplot scripts/animation.gp
+# Usage: gnuplot src/animation.gp
 
 set terminal gif animate delay 20 size 800,600
 set output 'res/heat_transfer_animation.gif'
@@ -16,3 +16,5 @@ do for [i=0:9900:100] {
 }
 
 print "Animation generated: res/heat_transfer_animation.gif"
+
+

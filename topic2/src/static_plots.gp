@@ -1,7 +1,7 @@
 #!/usr/bin/env gnuplot
 
 # Generate static heat transfer plots
-# Usage: gnuplot scripts/static_plots.gp
+# Usage: gnuplot src/static_plots.gp
 
 set terminal png size 800,600
 set output 'res/heat_initial.png'
