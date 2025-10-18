@@ -5,7 +5,8 @@
 set -e
 
 # Change to project root directory
-cd "$(dirname "$0")/../.."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/../../.."
 
 echo "🧹 Cleaning IGA-ADS project..."
 
@@ -18,19 +19,19 @@ else
     echo "ℹ️  iga-ads directory not found"
 fi
 
-# Remove Docker image
+# Remove Docker image (force remove)
 if docker image inspect iga-ads:latest >/dev/null 2>&1; then
-    echo "🐳 Removing Docker image iga-ads:latest..."
-    docker rmi iga-ads:latest
+    echo "🐳 Force removing Docker image iga-ads:latest..."
+    docker rmi -f iga-ads:latest 2>/dev/null || true
     echo "✅ Docker image removed"
 else
     echo "ℹ️  Docker image iga-ads:latest not found"
 fi
 
 # Remove entire res directory
-if [ -d "res" ]; then
+if [ -d "topic2/res" ]; then
     echo "📁 Removing res directory..."
-    rm -rf res
+    rm -rf topic2/res
     echo "✅ res directory removed"
 else
     echo "ℹ️  res directory not found"
@@ -38,8 +39,11 @@ fi
 
 # Clean up any Docker containers that might be running
 echo "🐳 Cleaning up Docker containers..."
-docker ps -q --filter "ancestor=iga-ads:latest" | xargs -r docker stop 2>/dev/null || true
-docker ps -aq --filter "ancestor=iga-ads:latest" | xargs -r docker rm 2>/dev/null || true
+# Force stop and remove all containers using iga-ads:latest
+docker ps -q --filter "ancestor=iga-ads:latest" | xargs -r docker stop -f 2>/dev/null || true
+docker ps -aq --filter "ancestor=iga-ads:latest" | xargs -r docker rm -f 2>/dev/null || true
+# Also clean up any stopped containers
+docker container prune -f >/dev/null 2>&1 || true
 echo "✅ Docker containers cleaned"
 
 # Remove any dangling Docker images

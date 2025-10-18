@@ -3,7 +3,8 @@
 set -e
 
 # Change to project root directory
-cd "$(dirname "$0")/../.."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/../../.."
 
 echo "🚀 Setting up IGA-ADS Heat Transfer Simulation..."
 
@@ -16,7 +17,7 @@ command -v gnuplot >/dev/null 2>&1 || { echo "❌ Gnuplot not found. Install via
 docker info >/dev/null 2>&1 || { echo "❌ Docker not running. Start Docker Desktop and try again."; exit 1; }
 
 # Create directories
-mkdir -p res/out
+mkdir -p topic2/res/out
 
 # Clone repository if needed
 if [ ! -d "iga-ads" ]; then
@@ -25,7 +26,7 @@ if [ ! -d "iga-ads" ]; then
 fi
 
 # Setup Docker
-cp src/Dockerfile iga-ads/Dockerfile
+cp topic2/src/Dockerfile iga-ads/Dockerfile
 
 # Build Docker image if needed
 if ! docker image inspect iga-ads:latest >/dev/null 2>&1; then
@@ -36,7 +37,3 @@ if ! docker image inspect iga-ads:latest >/dev/null 2>&1; then
 fi
 
 echo "✅ Setup complete!"
-echo ""
-echo "Next steps:"
-echo "  ./src/scripts/run_simulation.sh"
-echo "  ./src/scripts/generate_plots.sh"

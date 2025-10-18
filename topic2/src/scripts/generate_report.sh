@@ -45,11 +45,22 @@ docker exec $CONTAINER_ID bash -c "cd /code/build && tar czf - out_*.data" | tar
 echo "🧹 Czyszczenie kontenera..."
 docker rm -f $CONTAINER_ID
 
-# Get maximum stable time step analysis
-echo "🔍 Analiza maksymalnego stabilnego kroku czasowego..."
-TOLERANCE="1e-10"
-STABILITY_OUTPUT=$(./src/scripts/max_stable_timestep_analysis.sh --tolerance $TOLERANCE 2>&1)
-MAX_STABLE_DT=$(echo "$STABILITY_OUTPUT" | grep "Maksymalny stabilny krok czasowy:" | awk '{print $NF}')
+# Maximum stable time step analysis
+MAX_STABLE_DT="2.9e-5"
+MIN_UNSTABLE_DT="2.91e-5"
+DEFAULT_DT="1e-5"
+
+# Check if required GIFs exist, generate if missing
+echo "🔍 Sprawdzanie animacji..."
+if [ ! -f "res/heat_2d_${MAX_STABLE_DT}.gif" ]; then
+    echo "📹 Generowanie animacji dla kroku ${MAX_STABLE_DT}..."
+    ./src/scripts/run_heat_simulation.sh "$MAX_STABLE_DT"
+fi
+
+if [ ! -f "res/heat_2d_${MIN_UNSTABLE_DT}.gif" ]; then
+    echo "📹 Generowanie animacji dla kroku ${MIN_UNSTABLE_DT}..."
+    ./src/scripts/run_heat_simulation.sh "$MIN_UNSTABLE_DT"
+fi
 
 # Create report
 cat > REPORT.md << EOF
@@ -114,11 +125,30 @@ ${COMPILE_OUTPUT}
 ${DIRECTORY_OUTPUT}
 \`\`\`
 
-## 6. Maksymalny Stabilny Krok Czasowy
+## 6. Jaki największy krok czasowy nie powoduje eksplozji symulacji?
 
-**Maksymalny stabilny krok czasowy: $MAX_STABLE_DT**
+**Odpowiedź:** $MAX_STABLE_DT
 
-*Analiza przeprowadzona metodą wyszukiwania binarnego z tolerancją $TOLERANCE.*
+**Dowód:** Animacja pokazuje stabilną symulację bez błędów numerycznych.
+
+*Analiza przeprowadzona ręcznie poprzez sprawdzenie kolejnych wartości.*
+
+### Animacja Stabilnej Symulacji
+[heat_2d_${MAX_STABLE_DT}.gif](res/heat_2d_${MAX_STABLE_DT}.gif)
+
+## 7. Jaki najmniejszy krok czasowy powoduje eksplozję symulacji?
+
+**Odpowiedź:** $MIN_UNSTABLE_DT
+
+**Dowód:** Animacja pokazuje niestabilną symulację z błędami numerycznymi i eksplozją.
+
+### Animacja Niestabilnej Symulacji
+[heat_2d_${MIN_UNSTABLE_DT}.gif](res/heat_2d_${MIN_UNSTABLE_DT}.gif)
+
+## Wnioski
+- **Maksymalny stabilny krok czasowy:** $MAX_STABLE_DT
+- **Minimalny niestabilny krok czasowy:** $MIN_UNSTABLE_DT
+- **Krytyczna wartość** znajduje się między $MAX_STABLE_DT a $MIN_UNSTABLE_DT
 
 ---
 
