@@ -54,17 +54,20 @@ DEFAULT_DT="1e-5"
 echo "🔍 Sprawdzanie animacji..."
 if [ ! -f "res/heat_2d_${MAX_STABLE_DT}.gif" ]; then
     echo "📹 Generowanie animacji dla kroku ${MAX_STABLE_DT}..."
-    ./src/scripts/run_heat_simulation.sh "$MAX_STABLE_DT"
+    ./src/scripts/run_heat_simulation.sh "$MAX_STABLE_DT" >/dev/null 2>&1 || true
 fi
 
 if [ ! -f "res/heat_2d_${MIN_UNSTABLE_DT}.gif" ]; then
     echo "📹 Generowanie animacji dla kroku ${MIN_UNSTABLE_DT}..."
-    ./src/scripts/run_heat_simulation.sh "$MIN_UNSTABLE_DT"
+    ./src/scripts/run_heat_simulation.sh "$MIN_UNSTABLE_DT" >/dev/null 2>&1 || true
 fi
 
 # Create report
-cat > REPORT.md << EOF
+cat > raport.md << EOF
 # Raport IGA-ADS
+
+**Autor:** $(git config user.name 2>/dev/null || whoami)  
+**Data:** $(date '+%Y-%m-%d %H:%M:%S')
 
 ## 1. Informacje o Systemie
 
@@ -113,14 +116,14 @@ ninja -C build
 ${COMPILE_OUTPUT}
 \`\`\`
 
-## 5. Listing Katalogu po Uruchomieniu ./heat_2d
+## 5. Wyniki Uruchomienia Symulacji
 
 ### Komenda Uruchomienia
 \`\`\`bash
 ./examples/heat_2d
 \`\`\`
 
-### Wynik Uruchomienia i Listing Katalogu
+### Listing Katalogu z Wynikami
 \`\`\`bash
 ${DIRECTORY_OUTPUT}
 \`\`\`
@@ -134,7 +137,16 @@ ${DIRECTORY_OUTPUT}
 *Analiza przeprowadzona ręcznie poprzez sprawdzenie kolejnych wartości.*
 
 ### Animacja Stabilnej Symulacji
-[heat_2d_${MAX_STABLE_DT}.gif](res/heat_2d_${MAX_STABLE_DT}.gif)
+EOF
+
+# Add images only if they exist
+if [ -f "res/heat_2d_${MAX_STABLE_DT}.gif" ]; then
+    echo "![heat_2d_${MAX_STABLE_DT}.gif](./res/heat_2d_${MAX_STABLE_DT}.gif)" >> raport.md
+else
+    echo "*Animacja niedostępna - błąd generowania*" >> raport.md
+fi
+
+cat >> raport.md << EOF
 
 ## 7. Jaki najmniejszy krok czasowy powoduje eksplozję symulacji?
 
@@ -143,16 +155,13 @@ ${DIRECTORY_OUTPUT}
 **Dowód:** Animacja pokazuje niestabilną symulację z błędami numerycznymi i eksplozją.
 
 ### Animacja Niestabilnej Symulacji
-[heat_2d_${MIN_UNSTABLE_DT}.gif](res/heat_2d_${MIN_UNSTABLE_DT}.gif)
-
-## Wnioski
-- **Maksymalny stabilny krok czasowy:** $MAX_STABLE_DT
-- **Minimalny niestabilny krok czasowy:** $MIN_UNSTABLE_DT
-- **Krytyczna wartość** znajduje się między $MAX_STABLE_DT a $MIN_UNSTABLE_DT
-
----
-
-*Raport wygenerowany: $(date '+%Y-%m-%d %H:%M:%S')*
 EOF
+
+# Add second image only if it exists
+if [ -f "res/heat_2d_${MIN_UNSTABLE_DT}.gif" ]; then
+    echo "![heat_2d_${MIN_UNSTABLE_DT}.gif](./res/heat_2d_${MIN_UNSTABLE_DT}.gif)" >> raport.md
+else
+    echo "*Animacja niedostępna - błąd generowania*" >> raport.md
+fi
 
 echo "✅ Raport wygenerowany pomyślnie!"

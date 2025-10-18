@@ -1,0 +1,40 @@
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+
+% Force ALL figures to use [H] placement - stay exactly where they are
+\makeatletter
+\renewcommand{\@float}[1]{%
+  \@ifnextchar[{\@xfloat{#1}}{\@xfloat{#1}[H]}%
+}
+\makeatother
+
+% Code formatting with pretty styling and good wrapping
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=none,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    tabsize=2,
+    showstringspaces=false,
+    showtabs=false,
+    captionpos=b,
+    columns=flexible,
+    prebreak=\mbox{\textcolor{red}{$\hookleftarrow$}},
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}},
+    xleftmargin=0.2cm,
+    xrightmargin=0.2cm,
+    linewidth=\textwidth,
+    breakindent=0pt,
+    breakautoindent=false,
+    backgroundcolor=\color{lightgray!20},
+    rulecolor=\color{lightgray!50},
+    framerule=0.5pt,
+    framesep=5pt,
+    aboveskip=8pt,
+    belowskip=8pt
+}
