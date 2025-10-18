@@ -17,14 +17,14 @@
 3. **Generowanie raportu markdown**: `./src/scripts/generate_markdown_report.sh`
 4. **Tworzenie raportu PDF z markdown**: `./src/scripts/generate_pdf_report.sh`
 
-### Wymagania
+### Wymagania (macOS)
 
 - Docker Desktop
 - Git
 - Gnuplot (`brew install gnuplot`)
 - Pandoc (`brew install pandoc`)
 - ImageMagick (`brew install imagemagick`)
-- LaTeX (opcjonalne, dla lepszego formatowania PDF)
+- LaTeX
 
 ### Wyniki
 
@@ -34,10 +34,10 @@
 
 ## Wygenerowany Raport
 
-Projekt generuje kompleksowy raport analizujący symulację przenoszenia ciepła:
+Projekt generuje raport analizujący symulację przenoszenia ciepła:
 
-- **[raport.md](raport.md)** - Szczegółowy raport markdown z informacjami o systemie, wynikami symulacji i analizą stabilności
-- **raport.pdf** - Profesjonalna wersja PDF z odpowiednim formatowaniem i statycznymi obrazami
+- **[raport.md](raport.md)** - Raport markdown z informacjami o systemie, wynikami symulacji i analizą stabilności
+- **[raport.pdf](raport.pdf)** - Wersja PDF z formatowaniem i statycznymi obrazami
 
 Raport zawiera:
 
