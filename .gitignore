@@ -37,3 +37,5 @@ res/*.log
 
 # Docker
 .dockerignore
+
+project1/
