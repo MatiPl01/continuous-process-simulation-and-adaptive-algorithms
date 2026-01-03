@@ -1,38 +1,46 @@
-import numpy as np
-from PIL import Image
 
-def generate_seafloor_topography():
-    """Generate a synthetic seafloor topography with a sloping shelf and deeper ocean."""
+import numpy as np
+from PIL import Image, ImageDraw
+
+def generate_topography():
+    # Domain size in pixels (should match N_POINTS_PLOT or be high enough resolution)
     H, W = 256, 256
     
-    # Create depth map (0 = sea level, negative = below sea level)
-    # Simulate a continental shelf that slopes down
-    x = np.linspace(0, 2, W)  # domain is [0, 2] in x
-    y = np.linspace(0, 1, H)  # domain is [0, 1] in y
-    X, Y = np.meshgrid(x, y)
+    # Create a new image with mode 'F' (32-bit floating point pixels)
+    # We want values between 0.0 (deep) and maybe 0.5 (shallow/mountains)
+    # Let's create an image to visualize first, then specific values can be mapped.
+    # Using 'L' (8-bit pixels, black and white) for easy visualization and compatibility.
+    image = Image.new('L', (W, H), 0)
+    draw = ImageDraw.Draw(image)
     
-    # Create a sloping seafloor (deeper towards right side)
-    # and add a Gaussian bump in the middle (underwater mountain/ridge)
-    base_depth = -0.3 - 0.2 * X  # Slopes from -0.3 to -0.7
+    # Gradient background - deeper as x increases? or a hill int the middle?
+    # Let's make a rising slope: deep at x=0 (black), shallow at x=LENGTH (white)
+    # x is horizontal, y is vertical in PIL coordinates?
+    # Usually: (0,0) is top-left in PIL.
     
-    # Add underwater feature (seamount)
-    bump_x, bump_y = 1.0, 0.5
-    bump_amplitude = 0.15
-    bump_width = 0.3
-    bump = bump_amplitude * np.exp(-((X - bump_x)**2 + (Y - bump_y)**2) / (2 * bump_width**2))
+    # Let's create a "sea mount" or "island" shape in the middle.
+    # A radial gradient.
     
-    depth = base_depth + bump
+    # We can iterate specifically to create a numpy array and save it.
     
-    # Normalize to [0, 255] for image (we'll denormalize when loading)
-    # Store depth as grayscale: darker = deeper
-    depth_min, depth_max = depth.min(), depth.max()
-    depth_normalized = 255 * (depth - depth_min) / (depth_max - depth_min)
+    x = np.linspace(0, 1, W)
+    y = np.linspace(0, 1, H)
+    xv, yv = np.meshgrid(x, y)
     
-    image = Image.fromarray(depth_normalized.astype(np.uint8), mode='L')
+    # 2D Gaussian hill
+    sigma = 0.2
+    x0, y0 = 0.5, 0.5
+    # Height of 0.8 at peak
+    z = 0.8 * np.exp(-((xv - x0)**2 + (yv - y0)**2) / (2 * sigma**2))
+    
+    # Convert to 0-255 uint8 for L mode
+    z_img = (z * 255).astype(np.uint8)
+    
+    image = Image.fromarray(z_img, mode='L')
+    
+    # Save
     image.save("project2_tsunami/topography.png")
-    
-    print(f"Generated topography: depth range [{depth_min:.3f}, {depth_max:.3f}]")
-    print("Saved to project2_tsunami/topography.png")
+    print("Generated topography.png with a Gaussian hill.")
 
 if __name__ == "__main__":
-    generate_seafloor_topography()
+    generate_topography()
