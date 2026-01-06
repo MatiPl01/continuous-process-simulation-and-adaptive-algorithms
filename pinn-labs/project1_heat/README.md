@@ -32,14 +32,14 @@ Dodano komórkę generującą animację:
 
 ### 6. Parametry
 
-- `EPOCHS = 2000` (zredukowane dla szybszego trenowania)
-- Zakres czasu: [0, 0.1] (zamiast [0, 1]) - skupienie na wczesnej fazie dyfuzji
+- `EPOCHS = 10000` (zwiększone dla lepszej konwergencji przy trudniejszym kształcie)
+- Zakres czasu: [0, 0.1] - skupienie na wczesnej fazie dyfuzji
 
 ## Uruchomienie
 
 ```bash
-python generate_initial_condition.py  # wygenerowanie warunku początkowego
-jupyter notebook implementation.ipynb  # uruchomienie notebooka
+python generate_initial_condition.py  # wygenerowanie asymetrycznego warunku początkowego (L-shape)
+jupyter notebook PINN_heat_transfer_2d_solution.ipynb  # uruchomienie notebooka
 ```
 
 Wynik: `output/heat_transfer.gif`
