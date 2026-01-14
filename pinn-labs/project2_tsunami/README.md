@@ -1,24 +1,46 @@
-# Project 2: Tsunami Simulation with PINN
+# Projekt 2: Symulacja Tsunami nad zmienną topografią (PINN)
 
-## Description
+## Opis
 
-This project implements a Physics-Informed Neural Network (PINN) to simulate tsunami wave propagation over a variable sea floor topography. It solves the 2D shallow water equations (or a simplified wave equation) accounting for depth variations.
+PINN rozwiązujący równania płytkiej wody (Shallow Water Equations) 2D w celu symulacji propagacji fali tsunami nad dnem o zmiennej głębokości (wyspa w kształcie litery L).
 
-## Changes from Original
+## Zmiany w oryginalnym notebooku
 
-- **Topography Generation**: Added `generate_topography.py` to create `topography.png`, representing the sea floor.
-- **Topography Integration**: Modified `PINN_tsunami_2d.ipynb`:
-  - Loaded `topography.png` as a tensor.
-  - Updated `floor(x, y)` function to sample from the topography tensor using `torch.nn.functional.grid_sample`.
-  - Updated `plot_3D` to correctly visualize the vectorized floor.
+### 1. Poprawa Fizyki (Równania Płytkiej Wody)
 
-## How to Run
+W oryginalnym kodzie brakowało członów uwzględniających nachylenie dna. Zostały one dodane do funkcji `residual_loss`:
+- Obliczanie gradientów topografii: `dz/dx` i `dz/dy`.
+- Uwzględnienie ich w bilansie pędu: `(u_x - dzdx) * u_x` oraz `(u_y - dzdy) * u_y`.
 
-1. Generate topography:
+### 2. Stabilizacja Numeryczna (Bicubic + Gravity)
+
+- **Interpolacja**: Zmieniono tryb próbkowania topografii (`F.grid_sample`) na `'bicubic'`. Zapobiega to powstawaniu nieciągłości (ostrych kantów) w gradientach dna, które powodowały błędy w treningu.
+- **Grawitacja**: Zmniejszono stałą grawitacji `GRAVITY = 1.0` (zamiast 9.81), co ułatwia sieci neuronowej uczenie się dynamiki fali (skalowanie bezwymiarowe).
+
+### 3. Uproszczenie Sieci Neuronowej
+
+Zauważono, że zbyt głęboka sieć miała trudności z nauczeniem się prostego kształtu początkowego (Initial Condition).
+- **Warstwy**: Zredukowano z 10 do **4 warstw**.
+- **Neurony**: Zredukowano do 64 na warstwę.
+- **Fourier Features**: Zmniejszono skalę (`scale=1.0`), aby sieć lepiej odwzorowywała gładkie kształty (niskie częstotliwości) zamiast szumu.
+
+### 4. Topografia (Wygładzona L-kształtna wyspa)
+
+Wygenerowano nową mapę topografii (`topography.png`) za pomocą skryptu `generate_topography_final.py`. Zastosowano **rozmycie Gaussa (sigma=5)**, aby zapewnić różniczkowalność kształtu wyspy.
+
+### 5. Wizualizacja (Global Dynamic Scaling)
+
+Dodano mechanizm "Global Dynamic Scaling" do generowania animacji GIF. Skrypt najpierw oblicza wartości min/max dla całej symulacji, a następnie używa stałej skali kolorów (`vmin`, `vmax`), co eliminuje efekt "migotania" kolorów w animacji.
+
+## Uruchomienie
+
+1. Wygeneruj topografię:
    ```bash
-   python generate_topography.py
+   python project2_tsunami/generate_topography_final.py
    ```
-2. Run the notebook:
-   - Open `PINN_tsunami_2d.ipynb` in Jupyter.
-   - Run all cells.
-   - The output `tsunami_wave12.gif` will be generated.
+2. Uruchom notebook:
+   ```bash
+   jupyter notebook project2_tsunami/PINN_tsunami_2d_solution.ipynb
+   ```
+
+Wynik: Plik `tsunami_wave12.gif` przedstawiający propagację i odbicie fali.
